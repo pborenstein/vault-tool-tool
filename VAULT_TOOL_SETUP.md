@@ -605,6 +605,24 @@ Create `doc/ARCHITECTURE.md`:
 
 ## docs-updater Agent Integration
 
+### Installation (Optional)
+
+The docs-updater agent is available in this framework repository but is **not automatically installed**. To use it:
+
+1. **Manual Installation** (recommended for control):
+   ```bash
+   # Copy the agent to your Claude Code agents directory
+   cp agents/docs-updater.md ~/.claude/agents/
+
+   # Or create a symlink to stay updated with framework changes
+   ln -s $(pwd)/agents/docs-updater.md ~/.claude/agents/docs-updater.md
+   ```
+
+2. **Verify Installation**:
+   The agent will appear in Claude Code's available agents list and can be triggered when documentation synchronization is needed.
+
+**Note**: The docs-updater agent works with any project type, not just vault tools. It intelligently detects your project structure and adapts its documentation approach accordingly.
+
 ### When to Use
 
 Use the docs-updater agent proactively in these scenarios:
@@ -624,7 +642,8 @@ claude: "I'll use the docs-updater agent to ensure all documentation is current 
 
 ### Best Practices
 
-- Let Claude trigger the docs-updater agent automatically
+- The agent must be manually installed to be available
+- Let Claude trigger the docs-updater agent when appropriate trigger conditions are met
 - The agent will synchronize all documentation with current code state
 - It updates README, architecture docs, and code comments
 - Always run before major commits
