@@ -67,7 +67,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
    description = "Your tool description"
    requires-python = ">=3.10"
    readme = "README.md"
-   license = "MIT"
+   license = "MIT"  # Optional: See LICENSE file or specify your preferred license
    authors = [{ name = "Contributors" }]
    dependencies = [
        # Add your core dependencies here
