@@ -1,0 +1,54 @@
+[project]
+name = "your-tool-name"
+version = "0.1.0"
+description = "Your tool description"
+requires-python = ">=3.10"
+readme = "README.md"
+license = "MIT"
+authors = [{ name = "Contributors" }]
+dependencies = [
+    # Add your core dependencies here
+    # For visualization tools, use: "matplotlib>=3.7.0"
+    # For data processing: "pandas>=2.0.0" (if needed)
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=8.0",
+    "pytest-cov>=4.0",
+    "pytest-mock>=3.0",
+]
+dev = [
+    "ruff>=0.6.0",
+    "black>=24.0",
+    "mypy>=1.9.0",
+]
+
+[project.scripts]
+your-tool-name = "your_tool_name.main:main"
+
+[tool.uv]
+package = true
+
+[tool.setuptools]
+packages = ["your_tool_name", "your_tool_name.core", "your_tool_name.utils"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.black]
+target-version = ["py310"]
+line-length = 100
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "S"]
+ignore = []
+
+[build-system]
+requires = ["uv_build>=0.8.16,<0.9.0"]
+build-backend = "uv_build"
