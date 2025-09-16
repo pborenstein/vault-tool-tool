@@ -113,8 +113,8 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
    ignore = []
 
    [build-system]
-   requires = ["uv_build>=0.8.16,<0.9.0"]
-   build-backend = "uv_build"
+   requires = ["setuptools>=61.0", "wheel"]
+   build-backend = "setuptools.build_meta"
    ```
 
 5. **Create main entry point:**
@@ -351,9 +351,12 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
    # Claude Code configuration
    .claude/
 
+   # Project-specific files (add as needed)
    tag_migration_log.json
    tag-*.json
    ```
+
+   **Note**: Add project-specific patterns to the end of .gitignore as needed (e.g., `emojis.nogit.json`, log files, temporary data files).
 
 9. **Test the setup:**
    ```bash
@@ -493,7 +496,7 @@ uv run mypy .
 ## Coding Standards
 
 - Python 3.10+ required
-- 4-space indentation
+- 2-space indentation (per global CLAUDE.md)
 - Type hints required for public functions
 - Use pathlib.Path for file operations
 - Prefer logging over print (except CLI output in main.py)
@@ -649,6 +652,62 @@ claude: "I'll use the docs-updater agent to ensure all documentation is current 
 - Always run before major commits
 
 ## Common Patterns & Idioms
+
+### CLI Framework Choice
+
+Choose the appropriate CLI framework based on your tool's complexity:
+
+#### **argparse (Recommended for Simple Tools)**
+- **Use when**: Zero external dependencies desired, simple command structure
+- **Benefits**: Part of standard library, lightweight, sufficient for most vault tools
+- **Example**: emoji-sniper uses argparse for scan/substitute commands
+
+```python
+# Simple argparse structure
+import argparse
+
+def create_parser():
+    parser = argparse.ArgumentParser(description="Tool description")
+    subparsers = parser.add_subparsers(dest="command", help="Available commands")
+
+    scan_parser = subparsers.add_parser("scan", help="Scan files")
+    scan_parser.add_argument("vault_path", type=Path, help="Vault directory")
+    scan_parser.add_argument("--format", choices=["json", "txt"], default="json")
+
+    return parser
+```
+
+#### **click (Advanced CLI Features)**
+- **Use when**: Complex command hierarchies, rich help formatting, advanced validation needed
+- **Benefits**: Better help generation, parameter validation, command chaining
+- **Example**: tagex uses click for vault-first argument structure with global options
+
+```python
+# click structure with global options
+import click
+
+@click.group()
+@click.argument('vault_path', type=click.Path(exists=True))
+@click.option('--tag-types', type=click.Choice(['both', 'frontmatter', 'inline']))
+@click.pass_context
+def main(ctx, vault_path, tag_types):
+    ctx.ensure_object(dict)
+    ctx.obj['vault_path'] = vault_path
+    ctx.obj['tag_types'] = tag_types
+
+@main.command()
+@click.option('--format', type=click.Choice(['json', 'csv', 'txt']))
+@click.pass_context
+def extract(ctx, format):
+    # Access global options via ctx.obj
+    pass
+```
+
+**Framework Selection Guidelines:**
+- **Simple tools** (1-3 commands, basic options): Use argparse
+- **Complex tools** (many commands, global options, rich help): Use click
+- **Zero dependencies preferred**: Use argparse
+- **Rich CLI experience needed**: Use click
 
 ### CLI Structure
 
